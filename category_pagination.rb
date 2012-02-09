@@ -7,9 +7,66 @@
 # Place this script into the _plugins directory of your Jekyll site.
 #
 module Jekyll
+
+  # Change the Page object so it puts the path in the url.  This makes the dir
+  # method work as intended.
   class Page
-    # We need access to the page's directory.  It's write only by default.
-    attr_accessor :dir
+    # The template of the permalink.
+    #
+    # Returns the template String.
+    def template
+      if self.site.permalink_style == :pretty && !index? && html?
+        "/:path/:basename/"
+      else
+        "/:path/:basename:output_ext"
+      end
+    end
+
+    # The generated relative url of this page. e.g. /about.html.
+    #
+    # Returns the String url.
+    def url
+      return @url if @url
+
+      url = if permalink
+        permalink
+      else
+        {
+          "path"       => @dir,
+          "basename"   => self.basename,
+          "output_ext" => self.output_ext,
+        }.inject(template) { |result, token|
+          result.gsub(/:#{token.first}/, token.last)
+        }.gsub(/\/\//, "/")
+      end
+
+      # sanitize url
+      @url = url.split('/').reject{ |part| part =~ /^\.+$/ }.join('/')
+      @url += "/" if url =~ /\/$/
+      @url
+    end
+
+    # Convert this Page's data to a Hash suitable for use by Liquid.
+    #
+    # Returns the Hash representation of this Page.
+    def to_liquid
+      self.data.deep_merge({
+        "url"        => self.url,
+        "content"    => self.content })
+    end
+
+    # Obtain destination path.
+    #
+    # dest - The String path to the destination dir.
+    #
+    # Returns the destination file path String.
+    def destination(dest)
+      # The url needs to be unescaped in order to preserve the correct
+      # filename.
+      path = File.join(dest, CGI.unescape(self.url))
+      path = File.join(path, "index.html") if self.url =~ /\/$/
+      path
+    end
   end
 
   class Pagination < Generator
