@@ -1,3 +1,5 @@
+# encoding: utf-8
+#
 # Jekyll category pagination.
 # https://github.com/MrWerewolf/jekyll-category-pagination
 #
