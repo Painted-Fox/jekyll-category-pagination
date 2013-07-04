@@ -3,6 +3,9 @@ Jekyll Category Pagination
 
 This jekyll plugin enables separate categories to be paginated.
 
+*It appears that Jekyll v1.0 already has this feature and this plugin is
+deprecated.*
+
 Installation
 ------------
 
@@ -12,7 +15,8 @@ Jekyll site.  If the directory does not exist, create it.
 Usage
 -----
 
-Create a directory with the name of your category.  Then create an index page inside of this directory.
+Create a directory with the name of your category.  Then create an index page
+inside of this directory.
 
 As example, lets say you have two categories that you want paginated, **Art**
 for posts related to artwork and **Technology** for techy blog posts.  To
